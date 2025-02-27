@@ -1,5 +1,8 @@
 # Cut Classification 
 
+## Overview
+The user uploads a .jpg image of a haircut which is fed to the model returning an output to determine the type of haircut. 
+
 ## Neural Network
 - Built using TensorFlow Keras
     - Works like API
