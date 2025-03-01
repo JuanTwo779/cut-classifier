@@ -17,3 +17,9 @@ Flask Rest API, The user uploads a .jpg image of a haircut which is fed to the m
     - Validation: Mimics real-world inputs and increases accuracy -> model validates results against this dataset
 - Sequential Neural Network Model
     - Linear stack of layers where each layer has one input tensor and one output tensor
+
+## Dependecies
+- `Flask`
+- `Tensorflow`
+- `NumPy`
+- `io`
