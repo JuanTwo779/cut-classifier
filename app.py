@@ -26,19 +26,27 @@ data_cat = ['Burst Fade',
 img_height = 180
 img_width = 180
 
-# image = tf.keras.utils.load_img(img, target_size=(img_height,img_width))
-# img_arr = tf.keras.utils.array_to_img(image)
-# img_bat = tf.expand_dims(img_arr,0)
-# predict = model.predict(img_bat)
-# score = tf.nn.softmax(predict)
-# print('Haircut in image is a {} with accuracy of {:0.2f}'.format(data_cat[np.argmax(score)],np.max(score)*100))
-
 from flask import Flask, request, jsonify
 from io import BytesIO
-
-ALLOWED_EXTENSIONS = {'jpg', 'jpeg'}
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 
 app = Flask(__name__)
+
+limiter = Limiter(
+    app=app,
+    key_func=get_remote_address,
+    default_limits=["5 per day"]
+)
+
+@app.errorhandler(429)
+def ratelimit_error(e):
+    return jsonify({
+        "error": "Rate limit exceeded",
+        "message": "Too many requests. Please try again later."
+    }), 429
+
+ALLOWED_EXTENSIONS = {'jpg', 'jpeg'}
 
 @app.route("/")
 def hello_world():
@@ -67,20 +75,30 @@ def preprocess_image(file):
     return img_bat
 
 @app.post("/predict")
+# @Limiter.limit("4 per day")
 def predict_cut():
 
     # 1. take in JPG 
     if "file" not in request.files:
-        return jsonify({"error":"No file upload"}), 400
+        return jsonify({
+            "error":"No file upload",
+            "message": "No file was found or attached"
+        }), 400
     
     file = request.files['file']
 
     # 2. validate image
     if file.filename == "":  # Handle empty filename
-        return jsonify({"error": "No selected file"}), 400
+        return jsonify({
+            "error": "No selected file",
+            "message": "Filename is empty and cannot be processed"
+        }), 400
     
     if file and not allowed_file(file.filename):
-        return jsonify({"error":"file type not allowed"}), 400
+        return jsonify({
+            "error":"file type not allowed",
+            "message":"The file type must be .jpg or .jpeg"
+        }), 400
 
     # 3. fix image
     img_bat = preprocess_image(file)
