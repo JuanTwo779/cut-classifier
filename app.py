@@ -30,13 +30,15 @@ from flask import Flask, request, jsonify
 from io import BytesIO
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
 
 limiter = Limiter(
     app=app,
     key_func=get_remote_address,
-    default_limits=["5 per day"]
+    default_limits=["25 per day"]
 )
 
 @app.errorhandler(429)
@@ -88,7 +90,7 @@ def predict_cut():
     file = request.files['file']
 
     # 2. validate image
-    if file.filename == "":  # Handle empty filename
+    if file.filename == "":
         return jsonify({
             "error": "No selected file",
             "message": "Filename is empty and cannot be processed"
@@ -96,7 +98,7 @@ def predict_cut():
     
     if file and not allowed_file(file.filename):
         return jsonify({
-            "error":"file type not allowed",
+            "error":"File type not allowed",
             "message":"The file type must be .jpg or .jpeg"
         }), 400
 

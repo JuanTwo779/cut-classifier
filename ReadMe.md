@@ -24,3 +24,4 @@ Flask Rest API, The user uploads a .jpg image of a haircut which is fed to the m
 - `numpy`: prediction and score
 - `io`: converts image to BytesIO stream
 - `flask_limiter`: limit the amount of calls per client
+- `flask_cors`: allows cross-origin AJAX requests in flask
