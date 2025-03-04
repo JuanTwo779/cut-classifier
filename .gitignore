@@ -3,3 +3,4 @@
 *.webp
 
 notes.txt
+venv/
