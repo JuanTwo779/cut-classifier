@@ -19,9 +19,10 @@ Flask Rest API, The user uploads a .jpg image of a haircut which is fed to the m
     - Linear stack of layers where each layer has one input tensor and one output tensor
 
 ## Dependecies
-- `flask`: Framework to create REST API
+- `Flask`: Framework to create REST API
 - `tensorflow`: preprocess image, import Keras and load the model
 - `numpy`: prediction and score
 - `io`: converts image to BytesIO stream
-- `flask_limiter`: limit the amount of calls per client
-- `flask_cors`: allows cross-origin AJAX requests in flask
+- `Flask_Limiter`: limit the amount of calls per client
+- `flask-cors`: allows cross-origin AJAX requests in flask
+- `Pillow`: provides extensive file format support
