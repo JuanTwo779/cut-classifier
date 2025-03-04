@@ -38,14 +38,14 @@ CORS(app)
 limiter = Limiter(
     app=app,
     key_func=get_remote_address,
-    default_limits=["25 per day"]
+    default_limits=["3 per day"]
 )
 
 @app.errorhandler(429)
 def ratelimit_error(e):
     return jsonify({
         "error": "Rate limit exceeded",
-        "message": "Too many requests. Please try again later."
+        "message": "Rate limit exceeded. Please try again tomorrow."
     }), 429
 
 ALLOWED_EXTENSIONS = {'jpg', 'jpeg'}
@@ -77,7 +77,6 @@ def preprocess_image(file):
     return img_bat
 
 @app.post("/predict")
-# @Limiter.limit("4 per day")
 def predict_cut():
 
     # 1. take in JPG 
@@ -90,7 +89,8 @@ def predict_cut():
     file = request.files['file']
 
     # 2. validate image
-    if file.filename == "":
+
+    if file and file.filename == "":
         return jsonify({
             "error": "No selected file",
             "message": "Filename is empty and cannot be processed"
