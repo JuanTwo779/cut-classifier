@@ -32,16 +32,16 @@ from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from flask_cors import CORS
 
-app = Flask(__name__)
-CORS(app)
+application = Flask(__name__)
+CORS(application)
 
 limiter = Limiter(
-    app=app,
+    app=application,
     key_func=get_remote_address,
     default_limits=["4 per day"]
 )
 
-@app.errorhandler(429)
+@application.errorhandler(429)
 def ratelimit_error(e):
     return jsonify({
         "error": "Rate limit exceeded",
@@ -50,11 +50,11 @@ def ratelimit_error(e):
 
 ALLOWED_EXTENSIONS = {'jpg', 'jpeg'}
 
-@app.route("/")
+@application.route("/")
 def hello_world():
     return "Hello, World!"
 
-@app.route("/test")
+@application.route("/test")
 def model_test():
     image = tf.keras.utils.load_img(img, target_size=(img_height,img_width))
     img_arr = tf.keras.utils.array_to_img(image)
@@ -76,7 +76,7 @@ def preprocess_image(file):
     img_bat = tf.expand_dims(img_arr,0)
     return img_bat
 
-@app.post("/predict")
+@application.post("/predict")
 def predict_cut():
 
     # 1. take in JPG 
