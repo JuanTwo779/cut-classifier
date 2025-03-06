@@ -38,7 +38,7 @@ CORS(app)
 limiter = Limiter(
     app=app,
     key_func=get_remote_address,
-    default_limits=["3 per day"]
+    default_limits=["4 per day"]
 )
 
 @app.errorhandler(429)
