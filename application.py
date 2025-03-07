@@ -38,21 +38,27 @@ CORS(application)
 limiter = Limiter(
     app=application,
     key_func=get_remote_address,
-    default_limits=["4 per day"]
+    default_limits=["30 per day"],
+    strategy="fixed-window"
 )
 
 @application.errorhandler(429)
 def ratelimit_error(e):
     return jsonify({
         "error": "Rate limit exceeded",
-        "message": "Rate limit exceeded. Please try again tomorrow."
+        "message": "Rate limit exceeded. Please try again later."
     }), 429
 
 ALLOWED_EXTENSIONS = {'jpg', 'jpeg'}
 
+
+
 @application.route("/")
+@limiter.limit("1 per minute")
 def hello_world():
     return "Hello, World!"
+
+
 
 @application.route("/test")
 def model_test():
@@ -66,6 +72,8 @@ def model_test():
 
     return 'Haircut in image is a {} with an accuracy of {:0.2f}'.format(data_cat[np.argmax(score)],np.max(score)*100)
 
+
+
 def allowed_file(filename):
     return '.' in filename and \
         filename.rsplit('.',1)[1].lower() in ALLOWED_EXTENSIONS
@@ -77,6 +85,7 @@ def preprocess_image(file):
     return img_bat
 
 @application.post("/predict")
+@limiter.limit("10 per minute")
 def predict_cut():
 
     # 1. take in JPG 
