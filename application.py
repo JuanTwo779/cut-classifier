@@ -4,57 +4,26 @@ from tensorflow.keras.models import load_model
 
 import numpy as np
 
+from flask import Flask, request, jsonify
+from io import BytesIO
+from flask_cors import CORS
+
 model = load_model('Image_haircut_classify.keras')
 img = 'cut.jpg'
 
-data_cat = ['Burst Fade',
- 'Buzz Cut',
- 'Caesar Cut',
- 'Comb Over',
- 'Drop Fade',
- 'French Crop',
- 'High Fade',
- 'Ivy League',
- 'Low Fade',
- 'Mid Fade',
- 'Mid Part',
- 'Modern Mullet',
- 'Quiff',
- 'Side Part',
- 'Taper Fade']
+data_cat = ['Burst Fade', 'Buzz Cut', 'Caesar Cut', 'Comb Over', 'Drop Fade', 'French Crop', 'High Fade', 'Ivy League', 'Low Fade', 'Mid Fade', 'Mid Part', 'Modern Mullet', 'Quiff', 'Side Part', 'Taper Fade']
+img_height, img_width = 180, 180
 
 img_height = 180
 img_width = 180
 
-from flask import Flask, request, jsonify
-from io import BytesIO
-# from flask_limiter import Limiter
-# from flask_limiter.util import get_remote_address
-from flask_cors import CORS
 
 application = Flask(__name__)
 CORS(application)
 
-# limiter = Limiter(
-#     app=application,
-#     key_func=get_remote_address,
-#     default_limits=["30 per day"],
-#     strategy="fixed-window"
-# )
-
-@application.errorhandler(429)
-def ratelimit_error(e):
-    return jsonify({
-        "error": "Rate limit exceeded",
-        "message": "Rate limit exceeded. Please try again later."
-    }), 429
-
 ALLOWED_EXTENSIONS = {'jpg', 'jpeg'}
 
-
-
 @application.route("/")
-# @limiter.limit("1 per minute")
 def hello_world():
     return "Hello, World!"
 
@@ -85,7 +54,6 @@ def preprocess_image(file):
     return img_bat
 
 @application.post("/predict")
-# @limiter.limit("10 per minute")
 def predict_cut():
 
     # 1. take in JPG 
@@ -122,5 +90,5 @@ def predict_cut():
     return jsonify({"success": 'Haircut in image is a {} with an accuracy of {:0.2f}'.format(data_cat[np.argmax(score)],np.max(score)*100) })
 
 if __name__ == "__main__":
-    application.run(host='0.0.0.0', port=5000)
+    application.app.run(debug=True)
 
