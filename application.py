@@ -28,19 +28,19 @@ img_width = 180
 
 from flask import Flask, request, jsonify
 from io import BytesIO
-from flask_limiter import Limiter
-from flask_limiter.util import get_remote_address
+# from flask_limiter import Limiter
+# from flask_limiter.util import get_remote_address
 from flask_cors import CORS
 
 application = Flask(__name__)
 CORS(application)
 
-limiter = Limiter(
-    app=application,
-    key_func=get_remote_address,
-    default_limits=["30 per day"],
-    strategy="fixed-window"
-)
+# limiter = Limiter(
+#     app=application,
+#     key_func=get_remote_address,
+#     default_limits=["30 per day"],
+#     strategy="fixed-window"
+# )
 
 @application.errorhandler(429)
 def ratelimit_error(e):
@@ -54,7 +54,7 @@ ALLOWED_EXTENSIONS = {'jpg', 'jpeg'}
 
 
 @application.route("/")
-@limiter.limit("1 per minute")
+# @limiter.limit("1 per minute")
 def hello_world():
     return "Hello, World!"
 
@@ -85,7 +85,7 @@ def preprocess_image(file):
     return img_bat
 
 @application.post("/predict")
-@limiter.limit("10 per minute")
+# @limiter.limit("10 per minute")
 def predict_cut():
 
     # 1. take in JPG 
@@ -121,5 +121,6 @@ def predict_cut():
     # 5. return category and score to frontend
     return jsonify({"success": 'Haircut in image is a {} with an accuracy of {:0.2f}'.format(data_cat[np.argmax(score)],np.max(score)*100) })
 
-
+if __name__ == "__main__":
+    application.run(host='0.0.0.0', port=5000)
 
