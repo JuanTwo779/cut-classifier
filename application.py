@@ -90,6 +90,6 @@ def predict_cut():
     return jsonify({"success": 'Haircut in image is a {} with an accuracy of {:0.2f}'.format(data_cat[np.argmax(score)],np.max(score)*100) })
 
 if __name__ == "__main__":
-    application.run(debug=True, host='0.0.0.0', port=5000)
+    application.run(host="0.0.0.0", port=5000)
 
 
