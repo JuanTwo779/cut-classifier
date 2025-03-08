@@ -3,3 +3,6 @@
 *.webp
 
 venv/
+.ebignore
+__pycache__
+__pycache__/
