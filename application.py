@@ -29,7 +29,7 @@ def hello_world():
 
 
 
-@application.route("/test")
+# @application.route("/test")
 def model_test():
     image = tf.keras.utils.load_img(img, target_size=(img_height,img_width))
     img_arr = tf.keras.utils.array_to_img(image)
